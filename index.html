@@ -1,0 +1,16 @@
+<h1>Oasis Wrapped Sapphire ROSE Meta-Transaction Signer</h1>
+<input id="signMetaWithdrawHash" placeholder="0xmetaWithdrawHash"/ >
+<button onclick="signMetaWithdrawHash()">Sign</button>
+<div id="signature"></div>
+
+<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+<script>
+  async function signMetaWithdrawHash() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    const hash = document.getElementById("signMetaWithdrawHash").value;
+    const signature = await signer.signMessage(ethers.utils.arrayify(hash));
+    document.getElementById("signature").innerHTML = signature;
+  }
+</script>
