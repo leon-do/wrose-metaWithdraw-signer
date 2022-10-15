@@ -1,16 +1,75 @@
-<h1>Oasis Wrapped Sapphire ROSE Meta-Transaction Signer</h1>
-<input id="signMetaWithdrawHash" placeholder="0xmetaWithdrawHash"/ >
-<button onclick="signMetaWithdrawHash()">Sign</button>
+<h1>Balance</h1>
+<div id="balance"></div>
+<button onclick="balanceOf()">Get Balance</button>
+<hr />
+<h1>Deposit</h1>
+<input id="depositValue" type="number" value="0.1" />
+<button onclick="deposit()">Deposit</button>
+<hr />
+<h1>Withdraw</h1>
+<input id="withdrawValue" type="number" value="0.1" />
+<button onclick="withdraw()">Deposit</button>
+<hr />
+<h1>Create Meta-Transaction</h1>
+<div>
+  <div>To: <input id="to" placeholder="0xToAddress" value="0xdD4c825203f97984e7867F11eeCc813A036089D1" /></div>
+  <div>Value: <input id="value" placeholder="value" type="number" value="0.09" /></div>
+  <div>Reward: <input id="reward" placeholder="reward" type="number" value="0.01" /></div>
+  <button onclick="create()">Create</button>
+  <div id="hash"></div>
+</div>
+<hr />
+<h1>Sign Meta-Transaction</h1>
+<button onclick="sign()">Sign</button>
 <div id="signature"></div>
+<hr />
+<h1>Relay Meta-Transaction</h1>
+<button onclick="relay()">Send Meta Withdraw</button>
 
 <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+<script src="./wrose.js"></script>
 <script>
-  async function signMetaWithdrawHash() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  const wrose = new WROSE(signer);
 
-    const hash = document.getElementById("signMetaWithdrawHash").value;
-    const signature = await signer.signMessage(ethers.utils.arrayify(hash));
+  async function balanceOf() {
+    const balance = await wrose.balanceOf();
+    document.getElementById("balance").innerHTML = balance;
+  }
+
+  async function deposit() {
+    const depositValue = document.getElementById("depositValue").value;
+    const txHash = await wrose.deposit(depositValue);
+    console.log(txHash);
+  }
+
+  async function withdraw() {
+    const withdrawValue = document.getElementById("withdrawValue").value;
+    const txHash = await wrose.withdraw(withdrawValue);
+    console.log(txHash);
+  }
+
+  async function create() {
+    const to = document.getElementById("to").value;
+    const value = document.getElementById("value").value;
+    const reward = document.getElementById("reward").value;
+    const metaWithdrawHash = await wrose.createMetaWithdraw(to, value, reward);
+    document.getElementById("hash").innerHTML = metaWithdrawHash;
+  }
+
+  async function sign() {
+    const hash = document.getElementById("hash").innerHTML;
+    const signature = await wrose.signMetaWithdraw(hash);
     document.getElementById("signature").innerHTML = signature;
+  }
+
+  async function relay() {
+    const signature = document.getElementById("signature").innerHTML;
+    const to = document.getElementById("to").value;
+    const value = document.getElementById("value").value;
+    const reward = document.getElementById("reward").value;
+    const txHash = await wrose.relayMetaWithdraw(signature, to, value, reward);
+    console.log(txHash);
   }
 </script>
