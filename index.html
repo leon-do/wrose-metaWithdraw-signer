@@ -1,16 +1,21 @@
-<h1>Balance</h1>
+<h1>Oasis Wrapped Sapphire ROSE Meta-Transaction Signer</h1>
+
+<h2>Balance</h2>
 <div id="balance"></div>
 <button onclick="balanceOf()">Get Balance</button>
 <hr />
-<h1>Deposit</h1>
+
+<h2>Deposit</h2>
 <input id="depositValue" type="number" value="0.1" />
 <button onclick="deposit()">Deposit</button>
 <hr />
-<h1>Withdraw</h1>
+
+<h2>Withdraw</h2>
 <input id="withdrawValue" type="number" value="0.1" />
 <button onclick="withdraw()">Deposit</button>
 <hr />
-<h1>Create Meta-Transaction</h1>
+
+<h2>Create Meta-Transaction</h2>
 <div>
   <div>To: <input id="to" placeholder="0xToAddress" value="0xdD4c825203f97984e7867F11eeCc813A036089D1" /></div>
   <div>Value: <input id="value" placeholder="value" type="number" value="0.09" /></div>
@@ -19,11 +24,13 @@
   <div id="hash"></div>
 </div>
 <hr />
-<h1>Sign Meta-Transaction</h1>
+
+<h2>Sign Meta-Transaction</h2>
 <button onclick="sign()">Sign</button>
 <div id="signature"></div>
 <hr />
-<h1>Relay Meta-Transaction</h1>
+
+<h2>Relay Meta-Transaction</h2>
 <button onclick="relay()">Send Meta Withdraw</button>
 
 <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
