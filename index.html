@@ -1,16 +1,68 @@
-<h1>Oasis Wrapped Sapphire ROSE Meta-Transaction Signer</h1>
-<input id="signMetaWithdrawHash" placeholder="0xmetaWithdrawHash"/ >
-<button onclick="signMetaWithdrawHash()">Sign</button>
+<h1>Deposit</h1>
+<input id="depositValue" type="number" value="0.1" />
+<button onclick="deposit()">Deposit</button>
+<hr />
+<h1>Create Meta-Transaction</h1>
+<div>
+  <div>To: <input id="to" placeholder="0xToAddress" value="0xe9EB72519D543a0D080450582235ee84c757FE95" /></div>
+  <div>Value: <input id="value" placeholder="value" type="number" value="0.09" /></div>
+  <div>Reward: <input id="reward" placeholder="reward" type="number" value="0.01" /></div>
+  <button onclick="create()">Create</button>
+  <div id="hash"></div>
+</div>
+<hr />
+<h1>Sign Meta-Transaction</h1>
+<button onclick="sign()">Sign</button>
 <div id="signature"></div>
+<hr />
+<h1>Relay Meta-Transaction</h1>
+<button onclick="relay()">Send Meta Withdraw</button>
 
 <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
 <script>
-  async function signMetaWithdrawHash() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  const contractAddress = "0x1a6f25f437b8ed02a49cf84598b120303710fb6e";
+  // prettier-ignore
+  const abi = [ { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "src", "type": "address" }, { "indexed": true, "internalType": "address", "name": "guy", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "wad", "type": "uint256" } ], "name": "Approval", "type": "event" }, { "constant": false, "inputs": [ { "internalType": "address", "name": "guy", "type": "address" }, { "internalType": "uint256", "name": "wad", "type": "uint256" } ], "name": "approve", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "dst", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "wad", "type": "uint256" } ], "name": "Deposit", "type": "event" }, { "constant": false, "inputs": [ { "internalType": "bytes", "name": "signature", "type": "bytes" }, { "internalType": "address payable", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "wad", "type": "uint256" }, { "internalType": "uint256", "name": "nonce", "type": "uint256" }, { "internalType": "uint256", "name": "reward", "type": "uint256" } ], "name": "metaWithdraw", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "wad", "type": "uint256" } ], "name": "transfer", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "src", "type": "address" }, { "indexed": true, "internalType": "address", "name": "dst", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "wad", "type": "uint256" } ], "name": "Transfer", "type": "event" }, { "constant": false, "inputs": [ { "internalType": "address", "name": "src", "type": "address" }, { "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "wad", "type": "uint256" } ], "name": "transferFrom", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "src", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "wad", "type": "uint256" } ], "name": "Withdrawal", "type": "event" }, { "payable": true, "stateMutability": "payable", "type": "fallback" }, { "constant": false, "inputs": [ { "internalType": "uint256", "name": "wad", "type": "uint256" } ], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "", "type": "address" }, { "internalType": "address", "name": "", "type": "address" } ], "name": "allowance", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "balanceOf", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "decimals", "outputs": [ { "internalType": "uint8", "name": "", "type": "uint8" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "bytes32", "name": "_hash", "type": "bytes32" }, { "internalType": "bytes", "name": "_signature", "type": "bytes" } ], "name": "getSigner", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "wad", "type": "uint256" }, { "internalType": "uint256", "name": "nonce", "type": "uint256" }, { "internalType": "uint256", "name": "reward", "type": "uint256" } ], "name": "metaWithdrawHash", "outputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "name", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "replayNonce", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "symbol", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalSupply", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" } ]
 
-    const hash = document.getElementById("signMetaWithdrawHash").value;
-    const signature = await signer.signMessage(ethers.utils.arrayify(hash));
+  async function deposit(_deposit) {
+    _deposit = document.getElementById("depositValue").value;
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    const receipt = await contract["deposit"]({ value: ethers.utils.parseEther(_deposit) });
+    console.log(receipt);
+  }
+
+  async function create(_to, _value, _nonce, _reward) {
+    _to = document.getElementById("to").value;
+    _value = ethers.utils.parseEther(document.getElementById("value").value);
+    _reward = ethers.utils.parseEther(document.getElementById("reward").value);
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    const signerAddress = await signer.getAddress();
+    const nonce = await contract["replayNonce"](signerAddress);
+    const hash = await contract["metaWithdrawHash"](_to, _value, nonce, _reward);
+    console.log({ hash });
+    document.getElementById("hash").innerHTML = hash;
+  }
+
+  async function sign(_hash) {
+    _hash = document.getElementById("hash").innerHTML;
+    console.log(_hash);
+    const signature = await signer.signMessage(ethers.utils.arrayify(_hash));
+    console.log(signature);
     document.getElementById("signature").innerHTML = signature;
+  }
+
+  async function relay(_signature, _to, _value, _nonce, _reward) {
+    _signature = document.getElementById("signature").innerHTML;
+    _to = document.getElementById("to").value;
+    _value = ethers.utils.parseEther(document.getElementById("value").value);
+    _reward = ethers.utils.parseEther(document.getElementById("reward").value);
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    const signerAddress = await signer.getAddress();
+    const nonce = await contract["replayNonce"](signerAddress);
+    console.log({ _signature, _to, _value: _value.toString(), nonce: nonce.toString(), _reward: _reward.toString() });
+    const receipt = await contract["metaWithdraw"](_signature, _to, _value, nonce, _reward);
+    console.log(receipt);
   }
 </script>
